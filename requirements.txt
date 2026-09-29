@@ -1,0 +1,6 @@
+flask>=3.0
+numpy
+opencv-python
+pillow
+onnxruntime
+insightface

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Face Attendance</title>
+<link rel="stylesheet" href="/static/style.css"></head>
+<body>
+<header><h1>Face Attendance</h1></header>
+<main>
+ <section class="card" id="setup">
+  <h2>1. Select class</h2>
+  <div class="row">
+   <label>Branch <select id="branch"></select></label>
+   <label>Class <select id="cls"></select></label>
+   <button id="start">Start session</button>
+  </div>
+  <p id="setupMsg" class="muted"></p>
+ </section>
+
+ <div id="work" hidden>
+  <section class="card">
+   <h2>2. Scan</h2>
+   <div class="tabs">
+    <button class="tab active" data-mode="live">Live camera</button>
+    <button class="tab" data-mode="photo">Photos</button>
+   </div>
+
+   <div id="livePane">
+    <div class="stage"><video id="video" playsinline muted></video><canvas id="overlay"></canvas></div>
+    <div class="row"><button id="camToggle">Start camera</button><span id="liveInfo" class="muted"></span></div>
+   </div>
+
+   <div id="photoPane" hidden>
+    <div class="row">
+     <label class="btn">Take photo<input type="file" id="capture" accept="image/*" capture="environment" hidden></label>
+     <label class="btn">Upload from device<input type="file" id="upload" accept="image/*" multiple hidden></label>
+     <button id="scanAll" disabled>Scan photos</button>
+    </div>
+    <div id="thumbs" class="grid"></div>
+    <div id="results" class="grid"></div>
+   </div>
+  </section>
+
+  <section class="card">
+   <h2>3. Attendance <span id="counts" class="muted"></span></h2>
+   <div class="cols">
+    <div><h3 class="ok">Present</h3><ul id="presentList"></ul></div>
+    <div><h3 class="bad">Absent</h3><ul id="absentList"></ul></div>
+   </div>
+   <p class="muted">Tap a name to toggle manually.</p>
+   <button id="finalize">Finalize &amp; get CSV</button>
+   <a id="dl" class="btn" hidden>Download CSV</a>
+  </section>
+ </div>
+</main>
+<script src="/static/app.js"></script>
+</body></html>
