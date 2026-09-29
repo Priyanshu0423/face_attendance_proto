@@ -21,7 +21,8 @@
    <h2>2. Scan</h2>
    <div class="tabs">
     <button class="tab active" data-mode="live">Live camera</button>
-    <button class="tab" data-mode="photo">Photos</button>
+    <button class="tab" data-mode="click">Click photos</button>
+    <button class="tab" data-mode="upload">Upload photos</button>
    </div>
 
    <div id="livePane">
@@ -29,12 +30,23 @@
     <div class="row"><button id="camToggle">Start camera</button><span id="liveInfo" class="muted"></span></div>
    </div>
 
-   <div id="photoPane" hidden>
+   <div id="clickPane" hidden>
+    <div class="stage"><video id="clickVideo" playsinline muted></video></div>
     <div class="row">
-     <label class="btn">Take photo<input type="file" id="capture" accept="image/*" capture="environment" hidden></label>
-     <label class="btn">Upload from device<input type="file" id="upload" accept="image/*" multiple hidden></label>
-     <button id="scanAll" disabled>Scan photos</button>
+     <button id="clickCamToggle">Start camera</button>
+     <button id="shutter" disabled>&#128247; Click photo</button>
+     <span id="clickInfo" class="muted"></span>
     </div>
+   </div>
+
+   <div id="uploadPane" hidden>
+    <div class="row"><label class="btn">Choose photos from device<input type="file" id="upload" accept="image/*" multiple hidden></label></div>
+   </div>
+
+   <div id="galleryPane" hidden>
+    <div class="row"><span id="photoCount" class="muted">No photos yet</span>
+     <button id="clearAll" class="btn" type="button">Clear all</button>
+     <button id="scanAll" disabled>Scan photos for attendance</button></div>
     <div id="thumbs" class="grid"></div>
     <div id="results" class="grid"></div>
    </div>

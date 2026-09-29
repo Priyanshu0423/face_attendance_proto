@@ -47,8 +47,10 @@ document.addEventListener("click", async e => {
 document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
   mode = t.dataset.mode;
   document.querySelectorAll(".tab").forEach(x => x.classList.toggle("active", x === t));
-  $("livePane").hidden = mode !== "live"; $("photoPane").hidden = mode !== "photo";
+  $("livePane").hidden = mode !== "live"; $("clickPane").hidden = mode !== "click";
+  $("uploadPane").hidden = mode !== "upload"; $("galleryPane").hidden = mode === "live";
   if (mode !== "live") stopCam();
+  if (mode !== "click") stopClickCam();
 });
 
 // Draw image/frame to canvas (bakes in orientation), return JPEG blob
@@ -107,13 +109,35 @@ function addFiles(files) {
   [...files].forEach(f => photos.push({file: f, url: URL.createObjectURL(f)}));
   renderThumbs();
 }
-$("capture").onchange = e => { addFiles(e.target.files); e.target.value = ""; };
 $("upload").onchange = e => { addFiles(e.target.files); e.target.value = ""; };
 function renderThumbs() {
   $("thumbs").innerHTML = photos.map((p, i) =>
     `<div class="thumb"><img src="${p.url}"><button class="x" data-i="${i}">×</button></div>`).join("");
   $("scanAll").disabled = !photos.length;
+  $("photoCount").textContent = photos.length ? `${photos.length} photo(s) ready` : "No photos yet";
 }
+$("clearAll").onclick = () => { photos = []; $("results").innerHTML = ""; renderThumbs(); };
+
+// ---------- click photos (multiple, in-browser camera) ----------
+let clickStream = null;
+async function startClickCam() {
+  try {
+    clickStream = await navigator.mediaDevices.getUserMedia({video: {facingMode: "environment", width: {ideal: 1920}}});
+  } catch (e) { $("clickInfo").textContent = "Camera unavailable: " + e.message; return; }
+  const v = $("clickVideo"); v.srcObject = clickStream; await v.play();
+  $("clickCamToggle").textContent = "Stop camera"; $("shutter").disabled = false;
+}
+function stopClickCam() {
+  if (clickStream) clickStream.getTracks().forEach(t => t.stop()); clickStream = null;
+  $("clickCamToggle").textContent = "Start camera"; $("shutter").disabled = true;
+}
+$("clickCamToggle").onclick = () => clickStream ? stopClickCam() : startClickCam();
+$("shutter").onclick = async () => {
+  const v = $("clickVideo"); if (!v.videoWidth) return;
+  const blob = await toBlob(v, v.videoWidth, v.videoHeight);
+  photos.push({file: blob, url: URL.createObjectURL(blob)});
+  renderThumbs(); $("clickInfo").textContent = `${photos.length} photo(s) taken`;
+};
 $("thumbs").onclick = e => {
   const b = e.target.closest(".x"); if (!b) return;
   photos.splice(+b.dataset.i, 1); renderThumbs();
